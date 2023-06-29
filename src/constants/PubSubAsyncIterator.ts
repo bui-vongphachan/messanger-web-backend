@@ -1,0 +1,1 @@
+export const NEW_MESSAGES = "NEW_MESSAGES";
