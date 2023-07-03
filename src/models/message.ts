@@ -16,17 +16,17 @@ export interface NewMessageSubscriberPayload {
 export const messageGQL = gql`
   type Message {
     _id: String
-    senderId: String
-    recipientId: String
+    senderId: ID
+    recipientId: ID
     content: String
     createdAt: Date
     updatedAt: Date
   }
   type Query {
-    getMessages(recipient: String): [Message]
+    getMessages(recipientId: ID): [Message]
   }
   type Mutation {
-    sendMessage(senderId: String, recipientId: String, content: String): String
+    sendMessage(senderId: ID, recipientId: ID, content: String): Boolean
   }
   type Subscription {
     newMessageSubscriber: Message

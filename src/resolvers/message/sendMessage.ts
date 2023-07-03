@@ -24,7 +24,8 @@ export const sendMessage = async (_: any, args: Message) => {
 
       await pubsub.publish(NEW_MESSAGES, payload);
     }
-    return "Message sent";
+
+    return true;
   } catch (error) {
     return error;
   }
