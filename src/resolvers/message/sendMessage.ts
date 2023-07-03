@@ -31,6 +31,8 @@ export const sendMessage = async (_: any, args: Partial<Args>) => {
       conversation: conversation!,
     });
 
+    await updateLastMessage({ mongoClient, args, conversation: conversation! });
+
     const newMessagePayload: NewMessageSubscriberPayload = {
       newMessageSubscriber: message!,
     };
@@ -65,8 +67,9 @@ const checkConversation = async (props: {
     .db(process.env.MONGODB_DBNAME)
     .collection<Partial<Conversation>>(COLLECTION_CONVERSATIONS)
     .insertOne({
-      senderId: args.senderId!,
-      recipientId: args.recipientId!,
+      senderId: new ObjectId(args.senderId!),
+      recipientId: new ObjectId(args.recipientId!),
+      lastMessage: args.content,
     });
 
   return await mongoClient
@@ -94,4 +97,20 @@ const createMessage = async (props: {
     .db(process.env.MONGODB_DBNAME)
     .collection<Message>(COLLECTION_MESSAGES)
     .findOne({ _id: result.insertedId });
+};
+
+const updateLastMessage = async (props: {
+  mongoClient: MongoClient;
+  args: Partial<Args>;
+  conversation: Conversation | Partial<Conversation> | WithId<Conversation>;
+}) => {
+  const { mongoClient, args, conversation } = props;
+
+  await mongoClient
+    .db(process.env.MONGODB_DBNAME)
+    .collection<Partial<Conversation>>(COLLECTION_CONVERSATIONS)
+    .updateOne(
+      { _id: new ObjectId(conversation._id) },
+      { $set: { lastMessage: args.content } }
+    );
 };

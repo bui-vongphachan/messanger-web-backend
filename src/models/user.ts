@@ -1,7 +1,8 @@
 import { gql } from "apollo-server";
+import { ObjectId } from "mongodb";
 
 export interface User {
-  _id: string;
+  _id: ObjectId;
   email: string;
   name: string;
   image: string;
@@ -14,7 +15,13 @@ export const userGQL = gql`
     name: String
     image: String
   }
+
+  type UserWithConversation {
+    user: User
+    conversation: Conversation
+  }
+
   type Query {
-    getUsers(userId: String): [User]
+    getUsers(userId: String): [UserWithConversation]
   }
 `;

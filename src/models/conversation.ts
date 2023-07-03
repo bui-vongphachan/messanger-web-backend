@@ -2,9 +2,9 @@ import { gql } from "apollo-server";
 import { ObjectId } from "mongodb";
 
 export interface Conversation {
-  _id: string | ObjectId;
-  senderId: string;
-  recipientId: string;
+  _id: ObjectId;
+  senderId: ObjectId;
+  recipientId: ObjectId;
   lastMessage: string;
 }
 
@@ -17,9 +17,7 @@ export const conversationGQL = gql`
     _id: String
     senderId: ID
     recipientId: ID
-    content: String
-    createdAt: Date
-    updatedAt: Date
+    lastMessage: String
   }
   type Query {
     getConversations(userId: ID): [Conversation]
