@@ -32,8 +32,6 @@ export const getUsers = async (_: any, args: { userId: string }) => {
       );
     });
 
-    console.log({ item });
-
     return {
       user: item,
       conversation,
