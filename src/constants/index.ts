@@ -1,2 +1,2 @@
 export * from "./PubSubAsyncIterator";
-export * from "./databaseNames";
+export * from "./collectionNames";

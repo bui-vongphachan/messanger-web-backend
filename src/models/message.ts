@@ -2,8 +2,8 @@ import { gql } from "apollo-server";
 
 export interface Message {
   _id: string;
-  sender: string;
-  recipient: string;
+  senderId: string;
+  recipientId: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
@@ -16,8 +16,8 @@ export interface NewMessageSubscriberPayload {
 export const messageGQL = gql`
   type Message {
     _id: String
-    sender: String
-    recipient: String
+    senderId: String
+    recipientId: String
     content: String
     createdAt: Date
     updatedAt: Date
@@ -26,7 +26,7 @@ export const messageGQL = gql`
     getMessages(recipient: String): [Message]
   }
   type Mutation {
-    sendMessage(sender: String, recipient: String, content: String): String
+    sendMessage(senderId: String, recipientId: String, content: String): String
   }
   type Subscription {
     newMessageSubscriber: Message
