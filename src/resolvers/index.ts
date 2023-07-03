@@ -1,3 +1,4 @@
+import { conversation } from "./conversation";
 import { message } from "./message";
 import { users } from "./users";
 
@@ -6,4 +7,4 @@ export interface ResolverContext {
   profile: null;
 }
 
-export const resolvers = [message, users];
+export const resolvers = [message, users, conversation];

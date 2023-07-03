@@ -1,32 +1,97 @@
-import { COLLECTION_MESSAGES, NEW_MESSAGES } from "../../constants";
+import { MongoClient, ObjectId, WithId } from "mongodb";
+import {
+  COLLECTION_CONVERSATIONS,
+  COLLECTION_MESSAGES,
+  PUBSUB_NEW_MESSAGES,
+  PUBSUB_NEW_CONVERSATION,
+} from "../../constants";
 import { pubsub } from "../../helpers";
 import { clientPromise } from "../../helpers";
-import { Message, NewMessageSubscriberPayload } from "../../models";
+import {
+  Conversation,
+  Message,
+  NewMessageSubscriberPayload,
+  NewConversationSubscriberPayload,
+} from "../../models";
 
-export const sendMessage = async (_: any, args: Message) => {
+interface Args extends Message {
+  senderId: string;
+  recipientId: string;
+}
+
+export const sendMessage = async (_: any, args: Partial<Args>) => {
   try {
     const mongoClient = await clientPromise;
 
-    const result = await mongoClient
-      .db(process.env.MONGODB_DBNAME)
-      .collection<Message>(COLLECTION_MESSAGES)
-      .insertOne(args);
+    const conversation = await checkConversation({ mongoClient, args });
 
-    const newMessage = await mongoClient
-      .db(process.env.MONGODB_DBNAME)
-      .collection<Message>(COLLECTION_MESSAGES)
-      .findOne({ _id: result.insertedId });
+    const message = await createMessage({
+      mongoClient,
+      args,
+      conversation: conversation!,
+    });
 
-    if (newMessage) {
-      const payload: NewMessageSubscriberPayload = {
-        newMessageSubscriber: newMessage,
-      };
+    const newMessagePayload: NewMessageSubscriberPayload = {
+      newMessageSubscriber: message!,
+    };
 
-      await pubsub.publish(NEW_MESSAGES, payload);
-    }
+    const newConversatoinPayload: NewConversationSubscriberPayload = {
+      newConversationSubscriber: conversation! as Conversation,
+    };
+
+    await pubsub.publish(PUBSUB_NEW_MESSAGES, newMessagePayload);
+    await pubsub.publish(PUBSUB_NEW_CONVERSATION, newConversatoinPayload);
 
     return true;
   } catch (error) {
     return error;
   }
+};
+
+const checkConversation = async (props: {
+  mongoClient: MongoClient;
+  args: Partial<Args>;
+}) => {
+  const { mongoClient, args } = props;
+
+  const conversation = await mongoClient
+    .db(process.env.MONGODB_DBNAME)
+    .collection<Partial<Conversation>>(COLLECTION_CONVERSATIONS)
+    .findOne({ _id: new ObjectId(args.conversationId) });
+
+  if (conversation) return conversation;
+
+  const result = await mongoClient
+    .db(process.env.MONGODB_DBNAME)
+    .collection<Partial<Conversation>>(COLLECTION_CONVERSATIONS)
+    .insertOne({
+      senderId: args.senderId!,
+      recipientId: args.recipientId!,
+    });
+
+  return await mongoClient
+    .db(process.env.MONGODB_DBNAME)
+    .collection<Partial<Conversation>>(COLLECTION_CONVERSATIONS)
+    .findOne({ _id: new ObjectId(result.insertedId) });
+};
+
+const createMessage = async (props: {
+  mongoClient: MongoClient;
+  args: Partial<Args>;
+  conversation: Conversation | Partial<Conversation> | WithId<Conversation>;
+}) => {
+  const { mongoClient, args, conversation } = props;
+
+  const result = await mongoClient
+    .db(process.env.MONGODB_DBNAME)
+    .collection<Partial<Message>>(COLLECTION_MESSAGES)
+    .insertOne({
+      conversationId: conversation._id,
+      content: args.content!,
+    });
+
+  return await mongoClient
+    .db(process.env.MONGODB_DBNAME)
+    .collection<Message>(COLLECTION_MESSAGES)
+    .findOne({ _id: result.insertedId });
 };

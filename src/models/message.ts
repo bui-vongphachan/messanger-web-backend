@@ -1,32 +1,32 @@
 import { gql } from "apollo-server";
+import { ObjectId, WithId } from "mongodb";
 
 export interface Message {
   _id: string;
-  senderId: string;
-  recipientId: string;
+  conversationId: string | ObjectId;
   content: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface NewMessageSubscriberPayload {
-  newMessageSubscriber: Message;
+  newMessageSubscriber: Message | WithId<Message>;
 }
 
 export const messageGQL = gql`
   type Message {
     _id: String
-    senderId: ID
-    recipientId: ID
+    conversationId: ID
     content: String
-    createdAt: Date
-    updatedAt: Date
   }
   type Query {
-    getMessages(recipientId: ID): [Message]
+    getMessages(conversationId: ID): [Message]
   }
   type Mutation {
-    sendMessage(senderId: ID, recipientId: ID, content: String): Boolean
+    sendMessage(
+      conversationId: ID
+      senderId: ID
+      recipientId: ID
+      content: String
+    ): Boolean
   }
   type Subscription {
     newMessageSubscriber: Message
