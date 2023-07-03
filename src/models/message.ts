@@ -5,6 +5,7 @@ export interface Message {
   _id: string;
   conversationId: string | ObjectId;
   content: string;
+  senderId?: string | ObjectId;
 }
 
 export interface NewMessageSubscriberPayload {
@@ -16,6 +17,7 @@ export const messageGQL = gql`
     _id: ID
     conversationId: ID
     content: String
+    senderId: ID
   }
   type Query {
     getMessages(conversationId: ID): [Message]

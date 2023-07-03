@@ -91,6 +91,7 @@ const createMessage = async (props: {
     .insertOne({
       conversationId: conversation._id,
       content: args.content!,
+      senderId: new ObjectId(args.senderId!),
     });
 
   return await mongoClient
