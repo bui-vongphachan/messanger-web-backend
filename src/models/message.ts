@@ -13,7 +13,7 @@ export interface NewMessageSubscriberPayload {
 
 export const messageGQL = gql`
   type Message {
-    _id: String
+    _id: ID
     conversationId: ID
     content: String
   }
