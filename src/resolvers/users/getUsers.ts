@@ -17,18 +17,23 @@ export const getUsers = async (_: any, args: { userId: string }) => {
     const latestMessage = await mongoClient
       .db(process.env.MONGODB_DBNAME)
       .collection<Message>(COLLECTION_MESSAGES)
-      .findOne({
-        $or: [
-          {
-            senderId: new ObjectId(user._id),
-            recipientId: new ObjectId(args.userId),
-          },
-          {
-            senderId: new ObjectId(args.userId),
-            recipientId: new ObjectId(user._id),
-          },
-        ],
-      });
+      .findOne(
+        {
+          $or: [
+            {
+              senderId: new ObjectId(user._id),
+              recipientId: new ObjectId(args.userId),
+            },
+            {
+              senderId: new ObjectId(args.userId),
+              recipientId: new ObjectId(user._id),
+            },
+          ],
+        },
+        {
+          sort: { _id: -1 },
+        }
+      );
 
     return {
       user,
