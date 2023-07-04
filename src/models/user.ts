@@ -1,11 +1,19 @@
 import { gql } from "apollo-server";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
+import { Message } from "./message";
 
 export interface User {
   _id: ObjectId;
   email: string;
   name: string;
   image: string;
+}
+
+export interface UnreadConversationSubscriberPayload {
+  unreadConversation: {
+    user: User | WithId<User>;
+    latestMessage: Message;
+  };
 }
 
 export const userGQL = gql`
@@ -23,5 +31,8 @@ export const userGQL = gql`
 
   type Query {
     getUsers(userId: String): [UserWithLatestMessage]
+  }
+  type Subscription {
+    unreadConversation(userId: ID): UserWithLatestMessage
   }
 `;

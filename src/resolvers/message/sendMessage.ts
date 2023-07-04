@@ -1,8 +1,18 @@
 import { MongoClient, ObjectId } from "mongodb";
-import { COLLECTION_MESSAGES, PUBSUB_NEW_MESSAGES } from "../../constants";
+import {
+  COLLECTION_MESSAGES,
+  COLLECTION_USERS,
+  PUBSUB_NEW_MESSAGES,
+  PUBSUB_UNREAD_CONVERSATION,
+} from "../../constants";
 import { pubsub } from "../../helpers";
 import { clientPromise } from "../../helpers";
-import { Message, NewMessageSubscriberPayload } from "../../models";
+import {
+  Message,
+  NewMessageSubscriberPayload,
+  UnreadConversationSubscriberPayload,
+  User,
+} from "../../models";
 
 interface Args extends Message {
   senderId: string;
@@ -13,6 +23,11 @@ export const sendMessage = async (_: any, args: Partial<Args>) => {
   try {
     const mongoClient = await clientPromise;
 
+    const user = await checkUser({
+      mongoClient,
+      userId: args.senderId,
+    });
+
     const message = await createMessage({
       mongoClient,
       args,
@@ -22,12 +37,37 @@ export const sendMessage = async (_: any, args: Partial<Args>) => {
       newMessageSubscriber: message!,
     };
 
+    const unreadConversationPayload: UnreadConversationSubscriberPayload = {
+      unreadConversation: {
+        user,
+        latestMessage: message!,
+      },
+    };
+
     await pubsub.publish(PUBSUB_NEW_MESSAGES, newMessagePayload);
+
+    await pubsub.publish(PUBSUB_UNREAD_CONVERSATION, unreadConversationPayload);
 
     return message;
   } catch (error) {
     return error;
   }
+};
+
+const checkUser = async (props: {
+  mongoClient: MongoClient;
+  userId?: string;
+}) => {
+  const { mongoClient, userId } = props;
+
+  const user = await mongoClient
+    .db(process.env.MONGODB_DBNAME)
+    .collection<User>(COLLECTION_USERS)
+    .findOne({ _id: new ObjectId(userId) });
+
+  if (!user) throw new Error("User not found");
+
+  return user;
 };
 
 const createMessage = async (props: {
@@ -47,6 +87,7 @@ const createMessage = async (props: {
       senderId: new ObjectId(args.senderId!),
       recipientId: new ObjectId(args.recipientId!),
       sentDate: newObjectId.getTimestamp(),
+      isRead: false,
     });
 
   return await mongoClient

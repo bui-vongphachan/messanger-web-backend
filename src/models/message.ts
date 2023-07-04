@@ -7,6 +7,7 @@ export interface Message {
   senderId: string | ObjectId;
   recipientId: string | ObjectId;
   sentDate: Date;
+  isRead: boolean;
 }
 
 export interface NewMessageSubscriberPayload {
@@ -20,12 +21,14 @@ export const messageGQL = gql`
     senderId: ID
     recipientId: ID
     sentDate: Timestamp
+    isRead: Boolean
   }
   type Query {
     getMessages(userId: ID, partnerId: ID): [Message]
   }
   type Mutation {
     sendMessage(senderId: ID, recipientId: ID, content: String): Message
+    readMessages(senderId: ID, recipientId: ID): Boolean
   }
   type Subscription {
     newMessageSubscriber(userId: ID): Message
