@@ -19,6 +19,7 @@ export const readMessages = async (
       {
         senderId: new ObjectId(args.senderId),
         recipientId: new ObjectId(args.recipientId),
+        isRead: false,
       },
       { $set: { isRead: true } }
     );
