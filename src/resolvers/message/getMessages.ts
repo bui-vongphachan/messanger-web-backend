@@ -3,7 +3,13 @@ import { COLLECTION_MESSAGES } from "../../constants";
 import { clientPromise } from "../../helpers";
 import { Message } from "../../models";
 
-export const getMessages = async (_: any, args: Partial<Message>) => {
+export const getMessages = async (
+  _: any,
+  args: Partial<{
+    userId: string;
+    partnerId: string;
+  }>
+) => {
   const mongoClient = await clientPromise;
 
   const items = await mongoClient
@@ -12,8 +18,12 @@ export const getMessages = async (_: any, args: Partial<Message>) => {
     .find({
       $or: [
         {
-          senderId: new ObjectId(args.senderId!),
-          recipientId: new ObjectId(args.recipientId!),
+          senderId: new ObjectId(args.userId),
+          recipientId: new ObjectId(args.partnerId),
+        },
+        {
+          senderId: new ObjectId(args.partnerId),
+          recipientId: new ObjectId(args.userId),
         },
       ],
     })

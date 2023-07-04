@@ -20,7 +20,7 @@ export const messageGQL = gql`
     recipientId: ID
   }
   type Query {
-    getMessages(conversationId: ID): [Message]
+    getMessages(userId: ID, partnerId: ID): [Message]
   }
   type Mutation {
     sendMessage(senderId: ID, recipientId: ID, content: String): Message
