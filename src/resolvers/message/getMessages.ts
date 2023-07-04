@@ -10,7 +10,12 @@ export const getMessages = async (_: any, args: Partial<Message>) => {
     .db(process.env.MONGODB_DBNAME)
     .collection<Message>(COLLECTION_MESSAGES)
     .find({
-      conversationId: new ObjectId(args.conversationId),
+      $or: [
+        {
+          senderId: new ObjectId(args.senderId!),
+          recipientId: new ObjectId(args.recipientId!),
+        },
+      ],
     })
     .sort({ _id: -1 })
     .limit(50)
