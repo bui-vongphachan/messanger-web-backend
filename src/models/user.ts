@@ -16,12 +16,12 @@ export const userGQL = gql`
     image: String
   }
 
-  type UserWithConversation {
+  type UserWithLatestMessage {
     user: User
-    conversation: Conversation
+    latestMessage: Message
   }
 
   type Query {
-    getUsers(userId: String): [UserWithConversation]
+    getUsers(userId: String): [UserWithLatestMessage]
   }
 `;

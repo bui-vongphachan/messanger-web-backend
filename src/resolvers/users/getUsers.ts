@@ -1,40 +1,40 @@
 import { ObjectId } from "mongodb";
-import { COLLECTION_CONVERSATIONS, COLLECTION_USERS } from "../../constants";
+import { COLLECTION_MESSAGES, COLLECTION_USERS } from "../../constants";
 import { clientPromise } from "../../helpers";
-import { Conversation } from "../../models";
+import { Message } from "../../models";
 import { User } from "../../models/user";
 
 export const getUsers = async (_: any, args: { userId: string }) => {
   const mongoClient = await clientPromise;
 
-  const conversations = await mongoClient
-    .db(process.env.MONGODB_DBNAME)
-    .collection<Conversation>(COLLECTION_CONVERSATIONS)
-    .find({
-      $or: [
-        { senderId: new ObjectId(args.userId) },
-        { recipientId: new ObjectId(args.userId) },
-      ],
-    })
-    .toArray();
-
-  const items = await mongoClient
+  const users = await mongoClient
     .db(process.env.MONGODB_DBNAME)
     .collection<User>(COLLECTION_USERS)
     .find({ _id: { $ne: new ObjectId(args.userId) } })
     .toArray();
 
-  return items.map((item) => {
-    const conversation = conversations.find((conversation) => {
-      return (
-        conversation.senderId.toString() === item._id.toString() ||
-        conversation.recipientId.toString() === item._id.toString()
-      );
-    });
+  const userWithLatestMessage = users.map(async (user) => {
+    const latestMessage = await mongoClient
+      .db(process.env.MONGODB_DBNAME)
+      .collection<Message>(COLLECTION_MESSAGES)
+      .findOne({
+        $or: [
+          {
+            senderId: new ObjectId(user._id),
+            recipientId: new ObjectId(args.userId),
+          },
+          {
+            senderId: new ObjectId(args.userId),
+            recipientId: new ObjectId(user._id),
+          },
+        ],
+      });
 
     return {
-      user: item,
-      conversation,
+      user,
+      latestMessage,
     };
   });
+
+  return await Promise.all(userWithLatestMessage);
 };
