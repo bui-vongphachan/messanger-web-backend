@@ -36,13 +36,17 @@ const createMessage = async (props: {
 }) => {
   const { mongoClient, args } = props;
 
+  const newObjectId = new ObjectId();
+
   const result = await mongoClient
     .db(process.env.MONGODB_DBNAME)
     .collection<Partial<Message>>(COLLECTION_MESSAGES)
     .insertOne({
+      _id: newObjectId,
       content: args.content!,
       senderId: new ObjectId(args.senderId!),
       recipientId: new ObjectId(args.recipientId!),
+      sentDate: newObjectId.getTimestamp(),
     });
 
   return await mongoClient

@@ -2,10 +2,11 @@ import { gql } from "apollo-server";
 import { ObjectId, WithId } from "mongodb";
 
 export interface Message {
-  _id: string;
+  _id: ObjectId;
   content: string;
   senderId: string | ObjectId;
   recipientId: string | ObjectId;
+  sentDate: Date;
 }
 
 export interface NewMessageSubscriberPayload {
@@ -18,6 +19,7 @@ export const messageGQL = gql`
     content: String
     senderId: ID
     recipientId: ID
+    sentDate: Timestamp
   }
   type Query {
     getMessages(userId: ID, partnerId: ID): [Message]
