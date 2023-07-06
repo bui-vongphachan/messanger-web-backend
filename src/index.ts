@@ -19,12 +19,13 @@ import { typeDefs } from "./type-defs";
   // Create an Express app and HTTP server; we will attach both the WebSocket
   // server and the ApolloServer to this HTTP server.
   const app = express();
+
   const httpServer = createServer(app);
 
   // Create our WebSocket server using the HTTP server we just set up.
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: "/graphql",
+    path: "/g/graphql",
   });
   // Save the returned server's info so we can shutdown this server later
   const serverCleanup = useServer({ schema }, wsServer);
@@ -52,7 +53,7 @@ import { typeDefs } from "./type-defs";
   await server.start();
 
   app.use(
-    "/graphql",
+    "/g/graphql",
     cors<cors.CorsRequest>(),
     bodyParser.json(),
     expressMiddleware(server)
