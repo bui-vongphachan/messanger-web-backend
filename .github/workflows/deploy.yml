@@ -1,0 +1,30 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: SSH to private server
+      uses: appleboy/ssh-action@master
+      with:
+          host: ${{ secrets.SSH_IP_ADDRESS }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PUBLIC_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/bui/chat-app/messanger-web-backend
+            git checkout main
+            git pull
+            docker-compose down
+            yes | docker image prune -a
+            docker-compose up --build -d
