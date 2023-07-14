@@ -31,6 +31,6 @@ export const messageGQL = gql`
     readMessages(senderId: ID, recipientId: ID): Boolean
   }
   type Subscription {
-    newMessageSubscriber(userId: ID): Message
+    newMessageSubscriber(userId: ID, partnerId: ID): Message
   }
 `;
