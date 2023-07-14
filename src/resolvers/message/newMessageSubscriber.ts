@@ -13,19 +13,11 @@ export const newMessageSubscriber = {
       const { recipientId, senderId } = payload.newMessageSubscriber;
       const { userId, partnerId } = args;
 
-      if (
-        recipientId.toString() === userId &&
-        senderId.toString() === partnerId
-      )
-        return true;
+      if (recipientId.toString() !== userId) return false;
 
-      if (
-        recipientId.toString() === partnerId &&
-        senderId.toString() === userId
-      )
-        return true;
+      if (senderId.toString() !== partnerId) return false;
 
-      return false;
+      return true;
     }
   ),
 };
