@@ -13,8 +13,16 @@ export const getLatestMessage = async (props: {
     .collection<Message>(COLLECTION_MESSAGES)
     .findOne(
       {
-        senderId: new ObjectId(args.senderId!),
-        recipientId: new ObjectId(args.recipientId!),
+        $or: [
+          {
+            senderId: new ObjectId(args.senderId),
+            recipientId: new ObjectId(args.recipientId),
+          },
+          {
+            senderId: new ObjectId(args.recipientId),
+            recipientId: new ObjectId(args.senderId),
+          },
+        ],
       },
       {
         sort: { _id: -1 },
