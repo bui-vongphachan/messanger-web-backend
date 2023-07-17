@@ -31,9 +31,14 @@ export const messageGQL = gql`
     sentDate: Timestamp
     isRead: Boolean
   }
+  type GetMessageResult {
+    isEndOfConversation: Boolean
+    messages: [Message]
+  }
+
   type Query {
-    getMessages(userId: ID, partnerId: ID): [Message]
-    getPreviousMessages(currentMessageId: ID!): [Message]
+    getMessages(userId: ID, partnerId: ID): GetMessageResult
+    getPreviousMessages(currentMessageId: ID!): GetMessageResult
   }
   type Mutation {
     sendMessage(senderId: ID!, recipientId: ID!, content: String!): Message

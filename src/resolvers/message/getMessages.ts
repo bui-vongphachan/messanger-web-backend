@@ -31,5 +31,8 @@ export const getMessages = async (
     .limit(50)
     .toArray();
 
-  return items.reverse();
+  return {
+    isEndOfConversation: items.length < 50,
+    messages: items.reverse(),
+  };
 };
