@@ -11,8 +11,13 @@ export const getLatestMessage = async (props: {
   return await mongoClient
     .db(process.env.MONGODB_DBNAME)
     .collection<Message>(COLLECTION_MESSAGES)
-    .findOne({
-      senderId: new ObjectId(args.senderId!),
-      recipientId: new ObjectId(args.recipientId!),
-    });
+    .findOne(
+      {
+        senderId: new ObjectId(args.senderId!),
+        recipientId: new ObjectId(args.recipientId!),
+      },
+      {
+        sort: { _id: -1 },
+      }
+    );
 };
