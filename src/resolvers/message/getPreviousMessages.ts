@@ -45,7 +45,8 @@ export const getPreviousMessages = async (
     ])
     .toArray();
 
-  if (!result.length) return [];
-
-  return result[0].messages;
+  return {
+    isEndOfConversation: result[0].messages.length < 50,
+    messages: result[0].messages,
+  };
 };
