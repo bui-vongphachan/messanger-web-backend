@@ -10,16 +10,12 @@ import { clientPromise } from "../../helpers";
 import {
   Message,
   NewMessageSubscriberPayload,
+  SendMessageArgs,
   UnreadConversationSubscriberPayload,
   User,
 } from "../../models";
 
-interface Args extends Message {
-  senderId: string;
-  recipientId: string;
-}
-
-export const sendMessage = async (_: any, args: Partial<Args>) => {
+export const sendMessage = async (_: any, args: SendMessageArgs) => {
   try {
     const mongoClient = await clientPromise;
 
@@ -72,7 +68,7 @@ const checkUser = async (props: {
 
 const createMessage = async (props: {
   mongoClient: MongoClient;
-  args: Partial<Args>;
+  args: SendMessageArgs;
 }) => {
   const { mongoClient, args } = props;
 
@@ -86,6 +82,9 @@ const createMessage = async (props: {
       content: args.content!,
       senderId: new ObjectId(args.senderId!),
       recipientId: new ObjectId(args.recipientId!),
+      previousMessageId: args.previousMessageId
+        ? new ObjectId(args.previousMessageId)
+        : null,
       sentDate: newObjectId.getTimestamp(),
       isRead: false,
     });

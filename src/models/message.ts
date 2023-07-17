@@ -6,12 +6,20 @@ export interface Message {
   content: string;
   senderId: string | ObjectId;
   recipientId: string | ObjectId;
+  previousMessageId: string | ObjectId | null;
   sentDate: Date;
   isRead: boolean;
 }
 
 export interface NewMessageSubscriberPayload {
   newMessageSubscriber: Message | WithId<Message>;
+}
+
+export interface SendMessageArgs {
+  senderId: string;
+  recipientId: string;
+  previousMessageId: string | null;
+  content: string;
 }
 
 export const messageGQL = gql`
@@ -27,7 +35,12 @@ export const messageGQL = gql`
     getMessages(userId: ID, partnerId: ID): [Message]
   }
   type Mutation {
-    sendMessage(senderId: ID, recipientId: ID, content: String): Message
+    sendMessage(
+      senderId: ID!
+      recipientId: ID!
+      previousMessageId: ID
+      content: String!
+    ): Message
     readMessages(senderId: ID, recipientId: ID): Boolean
   }
   type Subscription {
