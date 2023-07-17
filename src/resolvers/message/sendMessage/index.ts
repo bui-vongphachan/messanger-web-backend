@@ -1,7 +1,7 @@
 import {
   PUBSUB_NEW_MESSAGES,
   PUBSUB_UNREAD_CONVERSATION,
-} from "../../../constants";
+} from "../../../constrains";
 import { pubsub } from "../../../helpers";
 import { clientPromise } from "../../../helpers";
 import {

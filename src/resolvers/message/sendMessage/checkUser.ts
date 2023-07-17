@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from "mongodb";
-import { COLLECTION_USERS } from "../../../constants";
+import { COLLECTION_USERS } from "../../../constrains";
 import { User } from "../../../models";
 
 export const checkUser = async (props: {

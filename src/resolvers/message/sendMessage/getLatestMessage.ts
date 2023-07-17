@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from "mongodb";
-import { COLLECTION_MESSAGES } from "../../../constants";
+import { COLLECTION_MESSAGES } from "../../../constrains";
 import { Message, SendMessageArgs } from "../../../models";
 
 export const getLatestMessage = async (props: {

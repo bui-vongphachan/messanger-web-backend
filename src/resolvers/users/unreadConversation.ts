@@ -1,6 +1,6 @@
 import { pubsub } from "../../helpers";
 import { withFilter } from "graphql-subscriptions";
-import { PUBSUB_UNREAD_CONVERSATION } from "../../constants";
+import { PUBSUB_UNREAD_CONVERSATION } from "../../constrains";
 import { UnreadConversationSubscriberPayload } from "../../models";
 
 export const unreadConversation = {
