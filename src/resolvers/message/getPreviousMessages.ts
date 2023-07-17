@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { COLLECTION_MESSAGES } from "../../constants";
+import { COLLECTION_MESSAGES, MESSAGE_QUERY_LIMIT } from "../../constants";
 import { clientPromise } from "../../helpers";
 import { Message } from "../../models";
 
@@ -24,7 +24,7 @@ export const getPreviousMessages = async (
           startWith: "$previousMessageId",
           connectFromField: "previousMessageId",
           connectToField: "_id",
-          maxDepth: 50,
+          maxDepth: MESSAGE_QUERY_LIMIT,
           as: "graphResult",
         },
       },
@@ -46,7 +46,7 @@ export const getPreviousMessages = async (
     .toArray();
 
   return {
-    isEndOfConversation: result[0].messages.length < 50,
+    isEndOfConversation: result[0].messages.length < MESSAGE_QUERY_LIMIT,
     messages: result[0].messages,
   };
 };
