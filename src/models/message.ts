@@ -33,7 +33,7 @@ export const messageGQL = gql`
   }
   type Query {
     getMessages(userId: ID, partnerId: ID): [Message]
-    getPreviousMessages(userId: ID!, partnerId: ID!): [Message]
+    getPreviousMessages(currentMessageId: ID!): [Message]
   }
   type Mutation {
     sendMessage(senderId: ID!, recipientId: ID!, content: String!): Message
