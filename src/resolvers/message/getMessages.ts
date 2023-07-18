@@ -33,6 +33,6 @@ export const getMessages = async (
 
   return {
     isEndOfConversation: items.length < MESSAGE_QUERY_LIMIT,
-    messages: items.reverse(),
+    messages: items,
   };
 };
