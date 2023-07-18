@@ -41,5 +41,20 @@ export const getUsers = async (_: any, args: { userId: string }) => {
     };
   });
 
-  return await Promise.all(userWithLatestMessage);
+  const userWithMessages = await Promise.all(userWithLatestMessage);
+
+  return userWithMessages.sort((a, b) => {
+    if (a.latestMessage === null && b.latestMessage === null) {
+      return 0;
+    } else if (a.latestMessage === null) {
+      return 1;
+    } else if (b.latestMessage === null) {
+      return -1;
+    } else {
+      return (
+        new Date(b.latestMessage.sentDate).getTime() -
+        new Date(a.latestMessage.sentDate).getTime()
+      );
+    }
+  });
 };
