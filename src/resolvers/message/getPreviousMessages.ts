@@ -46,7 +46,22 @@ export const getPreviousMessages = async (
     .toArray();
 
   return {
-    isEndOfConversation: result[0].messages.length < MESSAGE_QUERY_LIMIT,
-    messages: result[0].messages,
+    isEndOfConversation: (() => {
+      if (result.length === 0) return true; // if no message found
+
+      if (!result[0]) return true;
+
+      if (result[0].messages.length < MESSAGE_QUERY_LIMIT) return true;
+
+      return false;
+    })(),
+    messages: (() => {
+      /*  return dummyList.concat(dummyList) */
+      if (result.length === 0) return []; // if no message found
+
+      if (!result[0]) return [];
+
+      return result[0].messages;
+    })(),
   };
 };
