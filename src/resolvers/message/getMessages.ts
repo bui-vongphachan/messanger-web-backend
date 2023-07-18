@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { COLLECTION_MESSAGES } from "../../constants";
+import { COLLECTION_MESSAGES, MESSAGE_QUERY_LIMIT } from "../../constrains";
 import { clientPromise } from "../../helpers";
 import { Message } from "../../models";
 
@@ -28,8 +28,11 @@ export const getMessages = async (
       ],
     })
     .sort({ _id: -1 })
-    .limit(50)
+    .limit(MESSAGE_QUERY_LIMIT)
     .toArray();
 
-  return items.reverse();
+  return {
+    isEndOfConversation: items.length < MESSAGE_QUERY_LIMIT,
+    messages: items,
+  };
 };

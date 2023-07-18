@@ -1,6 +1,6 @@
 import { pubsub } from "../../helpers";
 import { withFilter } from "graphql-subscriptions";
-import { PUBSUB_NEW_MESSAGES } from "../../constants";
+import { PUBSUB_NEW_MESSAGES } from "../../constrains";
 import { NewMessageSubscriberPayload } from "../../models";
 
 export const newMessageSubscriber = {

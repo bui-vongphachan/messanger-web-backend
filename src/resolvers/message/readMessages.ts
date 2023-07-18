@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { COLLECTION_MESSAGES } from "../../constants";
+import { COLLECTION_MESSAGES } from "../../constrains";
 import { clientPromise } from "../../helpers";
 import { Message } from "../../models";
 
