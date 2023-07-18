@@ -1,1 +1,1 @@
-export const MESSAGE_QUERY_LIMIT = 10;
+export const MESSAGE_QUERY_LIMIT = 50;
